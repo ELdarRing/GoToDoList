@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Todo App</title>
+</head>
+<body>
+
+<h1>📝 Todo List</h1>
+
+<input id="taskInput" placeholder="Введите задачу">
+<button onclick="addTask()">Добавить</button>
+
+<ul id="list"></ul>
+
+<script>
+async function loadTasks() {
+    let res = await fetch('/tasks')
+    let data = await res.json()
+
+    let list = document.getElementById('list')
+    list.innerHTML = ""
+
+    data.forEach(t => {
+        let li = document.createElement('li')
+        li.innerText = t.text
+        list.appendChild(li)
+    })
+}
+
+async function addTask() {
+    let input = document.getElementById('taskInput')
+
+    await fetch('/tasks', {
+        method: 'POST',
+        body: JSON.stringify({ text: input.value })
+    })
+
+    input.value = ""
+    loadTasks()
+}
+
+loadTasks()
+</script>
+
+</body>
+</html>
