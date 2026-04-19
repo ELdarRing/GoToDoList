@@ -2,6 +2,10 @@
 <html>
 <head>
     <title>Todo App</title>
+    <style>
+        body { font-family: Arial; }
+        .done { text-decoration: line-through; color: gray; }
+    </style>
 </head>
 <body>
 
@@ -22,7 +26,15 @@ async function loadTasks() {
 
     data.forEach(t => {
         let li = document.createElement('li')
-        li.innerText = t.text
+
+        li.innerHTML = `
+            <span class="${t.done ? 'done' : ''}">
+                ${t.text}
+            </span>
+            <button onclick="toggleTask(${t.id})">✅</button>
+            <button onclick="deleteTask(${t.id})">❌</button>
+        `
+
         list.appendChild(li)
     })
 }
@@ -36,6 +48,16 @@ async function addTask() {
     })
 
     input.value = ""
+    loadTasks()
+}
+
+async function deleteTask(id) {
+    await fetch('/delete?id=' + id)
+    loadTasks()
+}
+
+async function toggleTask(id) {
+    await fetch('/toggle?id=' + id)
     loadTasks()
 }
 
